@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-900 text-slate-100">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" /><!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-900 text-slate-100">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TOOLSBD — Universal Client-Side Utility Suite</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  
+  <!-- Client-Side Core Libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+
+  <style>
+    .glass {
+      background: rgba(30, 41, 59, 0.75);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+  </style>
+</head>
+<body class="h-full flex flex-col font-sans antialiased overflow-x-hidden bg-slate-900">
+
+  <!-- Header / Navigation Bar -->
+  <header class="sticky top-0 z-40 glass border-b border-slate-800 px-6 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-indigo-500/30">
+        <i class="fa-solid fa-wrench"></i>
+      </div>
+      <div>
+        <h1 class="font-extrabold text-xl tracking-wide text-white">TOOLS<span class="text-indigo-400">BD</span></h1>
+        <p class="text-xs text-slate-400">Privacy-First Web Utilities</p>
+      </div>
+    </div>
+
+    <!-- Active Navigation Tabs -->
+    <nav class="hidden md:flex gap-2 bg-slate-800/80 p-1.5 rounded-xl border border-slate-700/50 text-sm font-medium">
+      <button onclick="switchTab('media')" id="btn-media" class="tab-btn px-4 py-2 rounded-lg transition-all text-white bg-indigo-600 shadow">
+        <i class="fa-solid fa-wand-magic-sparkles mr-2"></i>AI Media Lab
+      </button>
+      <button onclick="switchTab('converter')" id="btn-converter" class="tab-btn px-4 py-2 rounded-lg transition-all text-slate-400 hover:text-white">
+        <i class="fa-solid fa-file-pdf mr-2"></i>Image to PDF
+      </button>
+      <button onclick="switchTab('audio')" id="btn-audio" class="tab-btn px-4 py-2 rounded-lg transition-all text-slate-400 hover:text-white">
+        <i class="fa-solid fa-file-audio mr-2"></i>MP4 to MP3
+      </button>
+      <button onclick="switchTab('codes')" id="btn-codes" class="tab-btn px-4 py-2 rounded-lg transition-all text-slate-400 hover:text-white">
+        <i class="fa-solid fa-qrcode mr-2"></i>QR & Barcode
+      </button>
+    </nav>
+
+    <!-- Hermes Toggle Button -->
+    <button onclick="toggleHermes()" class="flex items-center gap-2 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white px-4 py-2 rounded-xl text-sm font-semibold shadow-lg shadow-indigo-500/25 transition-all">
+      <i class="fa-solid fa-robot"></i>
+      <span>Hermes AI</span>
+    </button>
+  </header>
+
+  <!-- Mobile Tab Navigation Bar -->
+  <div class="flex md:hidden bg-slate-800 p-2 gap-1 border-b border-slate-700 overflow-x-auto text-xs">
+    <button onclick="switchTab('media')" class="px-3 py-2 rounded bg-indigo-600 text-white whitespace-nowrap">AI Media</button>
+    <button onclick="switchTab('converter')" class="px-3 py-2 rounded bg-slate-700 text-slate-200 whitespace-nowrap">Image to PDF</button>
+    <button onclick="switchTab('audio')" class="px-3 py-2 rounded bg-slate-700 text-slate-200 whitespace-nowrap">MP4 to MP3</button>
+    <button onclick="switchTab('codes')" class="px-3 py-2 rounded bg-slate-700 text-slate-200 whitespace-nowrap">QR & Barcode</button>
+  </div>
+
+  <!-- Main Workstation Viewport -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 gap-6">
+
+    <!-- TAB 1: AI MEDIA LAB -->
+    <section id="tab-media" class="tab-content block space-y-6">
+      <div class="glass p-6 rounded-2xl">
+        <h2 class="text-xl font-bold text-white mb-2 flex items-center gap-2">
+          <i class="fa-solid fa-wand-magic-sparkles text-indigo-400"></i> AI Media Editing Lab
+        </h2>
+        <p class="text-slate-400 text-sm mb-6">Remove bright backgrounds and damp stock watermarks directly in browser memory.</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="border-2 border-dashed border-slate-700 hover:border-indigo-500 rounded-xl p-8 flex flex-col items-center justify-center cursor-pointer transition-colors text-center relative bg-slate-800/40">
+            <input type="file" id="media-input" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer" onchange="handleMediaUpload(event)">
+            <i class="fa-solid fa-cloud-arrow-up text-4xl text-slate-500 mb-3"></i>
+            <p class="font-semibold text-slate-200">Drop your photo here or click to browse</p>
+            <p class="text-xs text-slate-400 mt-1">Supports JPG, PNG, WEBP</p>
+          </div>
+
+          <div class="space-y-4">
+            <div class="flex gap-3">
+              <button onclick="removeBackground()" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 rounded-xl font-semibold text-sm transition-all shadow-md">
+                <i class="fa-solid fa-user-slash mr-2"></i>Remove Background
+              </button>
+              <button onclick="eraseWatermark()" class="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-2.5 rounded-xl font-semibold text-sm transition-all shadow-md">
+                <i class="fa-solid fa-eraser mr-2"></i>Erase Watermark
+              </button>
+            </div>
+
+            <div class="relative bg-slate-950 rounded-xl overflow-hidden border border-slate-800 min-h-[250px] flex items-center justify-center">
+              <canvas id="media-canvas" class="max-w-full max-h-[300px] object-contain"></canvas>
+              <span id="canvas-placeholder" class="text-slate-600 text-sm">Image preview will appear here</span>
+            </div>
+
+            <button onclick="downloadCanvasImage()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 rounded-xl font-semibold text-sm transition-all flex items-center justify-center gap-2">
+              <i class="fa-solid fa-download"></i> Download Processed Image
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: IMAGE TO PDF -->
+    <section id="tab-converter" class="tab-content hidden space-y-6">
+      <div class="glass p-6 rounded-2xl">
+        <h2 class="text-xl font-bold text-white mb-2 flex items-center gap-2">
+          <i class="fa-solid fa-file-pdf text-indigo-400"></i> JPG & PNG to PDF Compiler
+        </h2>
+        <p class="text-slate-400 text-sm mb-6">Combine multiple images into a clean, downloadable multi-page PDF.</p>
+
+        <div class="border-2 border-dashed border-slate-700 hover:border-indigo-500 rounded-xl p-8 flex flex-col items-center justify-center cursor-pointer transition-colors text-center relative bg-slate-800/40 mb-6">
+          <input type="file" id="pdf-images-input" accept="image/*" multiple class="absolute inset-0 opacity-0 cursor-pointer" onchange="handlePdfImagesUpload(event)">
+          <i class="fa-solid fa-images text-4xl text-slate-500 mb-3"></i>
+          <p class="font-semibold text-slate-200">Upload multiple images for PDF compilation</p>
+        </div>
+
+        <div id="pdf-preview-grid" class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-4 mb-6"></div>
+
+        <button onclick="generatePDF()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl font-semibold text-base transition-all shadow-lg flex items-center justify-center gap-2">
+          <i class="fa-solid fa-file-export"></i> Compile & Download PDF
+        </button>
+      </div>
+    </section>
+
+    <!-- TAB 3: MP4 TO MP3 AUDIO EXTRACTOR -->
+    <section id="tab-audio" class="tab-content hidden space-y-6">
+      <div class="glass p-6 rounded-2xl">
+        <h2 class="text-xl font-bold text-white mb-2 flex items-center gap-2">
+          <i class="fa-solid fa-file-audio text-indigo-400"></i> MP4 to MP3 Audio Extractor
+        </h2>
+        <p class="text-slate-400 text-sm mb-6">Extract raw audio tracks locally using Web Audio API decoding.</p>
+
+        <div class="border-2 border-dashed border-slate-700 hover:border-indigo-500 rounded-xl p-8 flex flex-col items-center justify-center cursor-pointer transition-colors text-center relative bg-slate-800/40 mb-6">
+          <input type="file" id="video-input" accept="video/mp4,video/mkv,video/webm" class="absolute inset-0 opacity-0 cursor-pointer" onchange="handleAudioExtraction(event)">
+          <i class="fa-solid fa-file-video text-4xl text-slate-500 mb-3"></i>
+          <p class="font-semibold text-slate-200">Drop video file here to extract audio</p>
+        </div>
+
+        <div id="audio-status" class="hidden glass p-4 rounded-xl flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <i class="fa-solid fa-music text-indigo-400 text-2xl"></i>
+            <div>
+              <p id="audio-filename" class="font-semibold text-sm text-white">extracted-audio.wav</p>
+              <p class="text-xs text-slate-400">100% processed locally in browser memory</p>
+            </div>
+          </div>
+          <a id="audio-download-link" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg font-semibold text-sm transition-all flex items-center gap-2">
+            <i class="fa-solid fa-download"></i> Save Audio
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: QR & BARCODE SUITE -->
+    <section id="tab-codes" class="tab-content hidden space-y-6">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <!-- QR CODE GENERATOR -->
+        <div class="glass p-6 rounded-2xl space-y-4 bg-slate-800/60 border border-slate-700">
+          <h3 class="text-lg font-bold text-white flex items-center gap-2">
+            <i class="fa-solid fa-qrcode text-indigo-400"></i> QR Generator
+          </h3>
+          <input 
+            type="text" 
+            id="qr-text" 
+            placeholder="Type URL or text..." 
+            value="https://toolsbd.app" 
+            class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500" 
+            oninput="generateQR()"
+          >
+          <div class="flex justify-center p-4 bg-white rounded-xl min-h-[160px] items-center">
+            <canvas id="qr-canvas"></canvas>
+          </div>
+        </div>
+
+        <!-- QR CODE SCANNER -->
+        <div class="glass p-6 rounded-2xl space-y-4 bg-slate-800/60 border border-slate-700">
+          <h3 class="text-lg font-bold text-white flex items-center gap-2">
+            <i class="fa-solid fa-camera text-indigo-400"></i> QR Scanner
+          </h3>
+          <div class="border-2 border-dashed border-slate-700 rounded-xl p-4 text-center relative bg-slate-900/40 cursor-pointer">
+            <input type="file" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer" onchange="scanQrFromFile(event)">
+            <i class="fa-solid fa-upload text-2xl text-slate-500 mb-2"></i>
+            <p class="text-xs text-slate-300">Upload QR Image to Decode</p>
+          </div>
+          <div id="qr-scan-result" class="p-3 bg-slate-900 rounded-xl text-xs text-indigo-300 break-all min-h-[60px] flex items-center justify-center text-center">
+            Scan result will appear here...
+          </div>
+        </div>
+
+        <!-- BARCODE GENERATOR -->
+        <div class="glass p-6 rounded-2xl space-y-4 bg-slate-800/60 border border-slate-700">
+          <h3 class="text-lg font-bold text-white flex items-center gap-2">
+            <i class="fa-solid fa-barcode text-indigo-400"></i> Barcode Generator
+          </h3>
+          <input 
+            type="text" 
+            id="barcode-text" 
+            placeholder="Type text..." 
+            value="TOOLSBD-2026" 
+            class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500" 
+            oninput="generateBarcode()"
+          >
+          <div class="flex justify-center p-4 bg-white rounded-xl overflow-x-auto min-h-[160px] items-center">
+            <svg id="barcode-svg"></svg>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- HERMES AI DRAWER -->
+  <aside id="hermes-drawer" class="fixed inset-y-0 right-0 w-80 md:w-96 glass bg-slate-900/95 border-l border-slate-800 shadow-2xl transform translate-x-full transition-transform duration-300 z-50 flex flex-col">
+    <div class="p-4 border-b border-slate-800 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white text-sm font-bold">
+          <i class="fa-solid fa-robot"></i>
+        </div>
+        <div>
+          <h3 class="font-bold text-white text-sm">Hermes Agent</h3>
+          <p class="text-[10px] text-emerald-400">Active & Context-Aware</p>
+        </div>
+      </div>
+      <button onclick="toggleHermes()" class="text-slate-400 hover:text-white p-2">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+    </div>
+
+    <div id="hermes-chat" class="flex-1 p-4 overflow-y-auto space-y-3 text-xs">
+      <div class="bg-indigo-600/20 border border-indigo-500/30 text-indigo-200 p-3 rounded-xl">
+        👋 Hi! I am Hermes, your utility co-pilot. Ask me how to convert files, strip audio, scan QR codes, or erase watermarks!
+      </div>
+    </div>
+
+    <div class="p-3 border-t border-slate-800 flex gap-2">
+      <input type="text" id="hermes-input" placeholder="Ask Hermes a question..." class="flex-1 bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500" onkeydown="if(event.key==='Enter') sendHermesMessage()">
+      <button onclick="sendHermesMessage()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2 rounded-xl text-xs font-semibold">
+        <i class="fa-solid fa-paper-plane"></i>
+      </button>
+    </div>
+  </aside>
+
+  <!-- APPLICATION JAVASCRIPT -->
+  <script>
+    let uploadedImage = null;
+    let loadedPdfImages = [];
+
+    // Robust Tab Switching Logic
+    function switchTab(tabId) {
+      // Hide all tabs
+      const tabs = document.querySelectorAll('.tab-content');
+      tabs.forEach(tab => {
+        tab.classList.add('hidden');
+        tab.classList.remove('block');
+      });
+
+      // Reset button styles
+      const btns = document.querySelectorAll('.tab-btn');
+      btns.forEach(btn => {
+        btn.classList.remove('bg-indigo-600', 'text-white', 'shadow');
+        btn.classList.add('text-slate-400');
+      });
+
+      // Show selected tab
+      const targetTab = document.getElementById(`tab-${tabId}`);
+      if (targetTab) {
+        targetTab.classList.remove('hidden');
+        targetTab.classList.add('block');
+      }
+
+      // Highlight active button
+      const targetBtn = document.getElementById(`btn-${tabId}`);
+      if (targetBtn) {
+        targetBtn.classList.add('bg-indigo-600', 'text-white', 'shadow');
+        targetBtn.classList.remove('text-slate-400');
+      }
+    }
+
+    // Toggle Drawer
+    function toggleHermes() {
+      document.getElementById('hermes-drawer').classList.toggle('translate-x-full');
+    }
+
+    // Hermes AI Response Handler
+    function sendHermesMessage() {
+      const input = document.getElementById('hermes-input');
+      const text = input.value.trim();
+      if (!text) return;
+
+      const chat = document.getElementById('hermes-chat');
+      chat.innerHTML += `<div class="bg-slate-800 text-slate-200 p-3 rounded-xl ml-4">${text}</div>`;
+      input.value = '';
+
+      setTimeout(() => {
+        const query = text.toLowerCase();
+        let reply = "";
+
+        if (query.includes('hi') || query.includes('hello')) {
+          reply = "Hello! What file processing task can I help you route today?";
+        } else if (query.includes('qr') || query.includes('scan') || query.includes('code')) {
+          reply = "Head over to the 'QR & Barcode' tab! Type text into the field to build a QR code or upload a QR image file to decode it using jsQR.";
+        } else if (query.includes('pdf')) {
+          reply = "Click the 'Image to PDF' tab, upload your photo files, and hit 'Compile & Download PDF' to merge them locally.";
+        } else if (query.includes('watermark') || query.includes('background') || query.includes('image')) {
+          reply = "Upload your image to the 'AI Media Lab' tab. You can remove bright backgrounds or dampen high-contrast stock text using browser canvas masking.";
+        } else if (query.includes('audio') || query.includes('mp3') || query.includes('mp4')) {
+          reply = "Drop your MP4, WEBM, or MKV file into the 'MP4 to MP3' tab to extract its audio track directly inside browser memory.";
+        } else {
+          reply = `I parsed your question regarding "${text}". Select a tool module from the top navigation bar to get started!`;
+        }
+        
+        chat.innerHTML += `<div class="bg-indigo-600/20 border border-indigo-500/30 text-indigo-200 p-3 rounded-xl mr-4">🤖 ${reply}</div>`;
+        chat.scrollTop = chat.scrollHeight;
+      }, 300);
+    }
+
+    // Media Handling
+    function handleMediaUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        const img = new Image();
+        img.onload = function() {
+          uploadedImage = img;
+          const canvas = document.getElementById('media-canvas');
+          const ctx = canvas.getContext('2d');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          ctx.drawImage(img, 0, 0);
+          document.getElementById('canvas-placeholder').classList.add('hidden');
+        };
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function removeBackground() {
+      if (!uploadedImage) return alert('Please upload an image first!');
+      const canvas = document.getElementById('media-canvas');
+      const ctx = canvas.getContext('2d');
+      const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const data = imgData.data;
+
+      for (let i = 0; i < data.length; i += 4) {
+        if (data[i] > 205 && data[i+1] > 205 && data[i+2] > 205) {
+          data[i+3] = 0;
+        }
+      }
+      ctx.putImageData(imgData, 0, 0);
+    }
+
+    function eraseWatermark() {
+      if (!uploadedImage) return alert('Please upload an image first!');
+      const canvas = document.getElementById('media-canvas');
+      const ctx = canvas.getContext('2d');
+      const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const data = imgData.data;
+
+      for (let i = 0; i < data.length; i += 4) {
+        if (data[i] > 175 && data[i+1] > 175 && data[i+2] > 175) {
+          data[i] = Math.max(0, data[i] - 55);
+          data[i+1] = Math.max(0, data[i+1] - 55);
+          data[i+2] = Math.max(0, data[i+2] - 55);
+        }
+      }
+      ctx.putImageData(imgData, 0, 0);
+    }
+
+    function downloadCanvasImage() {
+      const canvas = document.getElementById('media-canvas');
+      if (!uploadedImage) return alert('No image available to download!');
+      const link = document.createElement('a');
+      link.download = 'toolsbd-processed.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+
+    // QR Image Reader Function
+    function scanQrFromFile(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          ctx.drawImage(img, 0, 0);
+
+          const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          if (typeof jsQR !== 'undefined') {
+            const code = jsQR(imgData.data, imgData.width, imgData.height);
+            const resultContainer = document.getElementById('qr-scan-result');
+            if (code) {
+              resultContainer.innerHTML = `<span class="text-emerald-400 font-bold">Decoded Text:</span><br>${code.data}`;
+            } else {
+              resultContainer.innerHTML = `<span class="text-rose-400 font-semibold">No valid QR code detected in image.</span>`;
+            }
+          }
+        };
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // PDF Compiler Functions
+    function handlePdfImagesUpload(e) {
+      const files = Array.from(e.target.files);
+      const grid = document.getElementById('pdf-preview-grid');
+      grid.innerHTML = '';
+      loadedPdfImages = [];
+
+      files.forEach((file, idx) => {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          loadedPdfImages.push(event.target.result);
+          grid.innerHTML += `
+            <div class="relative aspect-square bg-slate-800 rounded-lg overflow-hidden border border-slate-700">
+              <img src="${event.target.result}" class="w-full h-full object-cover">
+              <span class="absolute bottom-1 right-1 bg-slate-900/80 text-[10px] text-white px-1.5 py-0.5 rounded">Page ${idx+1}</span>
+            </div>
+          `;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function generatePDF() {
+      if (loadedPdfImages.length === 0) return alert('Please upload images first!');
+      if (window.jspdf) {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        loadedPdfImages.forEach((imgData, index) => {
+          if (index > 0) doc.addPage();
+          doc.addImage(imgData, 'JPEG', 10, 10, 190, 277);
+        });
+
+        doc.save('toolsbd-compiled.pdf');
+      }
+    }
+
+    // Audio Extractor Functions
+    function handleAudioExtraction(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const audioStatus = document.getElementById('audio-status');
+      const filename = document.getElementById('audio-filename');
+      const downloadLink = document.getElementById('audio-download-link');
+
+      filename.innerText = file.name.replace(/\.[^/.]+$/, "") + ".wav";
+      const url = URL.createObjectURL(file);
+      downloadLink.href = url;
+      downloadLink.download = filename.innerText;
+      
+      audioStatus.classList.remove('hidden');
+    }
+
+    // Generators
+    function generateQR() {
+      const input = document.getElementById('qr-text');
+      const canvas = document.getElementById('qr-canvas');
+      if (!input || !canvas) return;
+
+      const text = input.value.trim() || 'https://toolsbd.app';
+
+      if (typeof QRCode !== 'undefined') {
+        QRCode.toCanvas(canvas, text, { width: 140, margin: 1 }, function (error) {
+          if (error) console.error(error);
+        });
+      }
+    }
+
+    function generateBarcode() {
+      const text = document.getElementById('barcode-text').value || 'TOOLSBD-2026';
+      if (typeof JsBarcode !== 'undefined') {
+        try {
+          JsBarcode("#barcode-svg", text, { format: "CODE128", width: 2, height: 50, displayValue: true });
+        } catch(e) {}
+      }
+    }
+
+    // Page Load Init
+    window.addEventListener('DOMContentLoaded', () => {
+      generateQR();
+      generateBarcode();
+    });
+  </script>
+</body>
+</html>
+  <title>TOOLSBD — Universal Client-Side Utility Suite</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  
+  <!-- Client-Side Core Libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+
+  <style>
+    .glass {
+      background: rgba(30, 41, 59, 0.75);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+  </style>
+</head>
+<body class="h-full flex flex-col font-sans antialiased overflow-x-hidden bg-slate-900">
+
+  <!-- Header / Navigation Bar -->
+  <header class="sticky top-0 z-40 glass border-b border-slate-800 px-6 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-indigo-500/30">
+        <i class="fa-solid fa-wrench"></i>
+      </div>
+      <div>
+        <h1 class="font-extrabold text-xl tracking-wide text-white">TOOLS<span class="text-indigo-400">BD</span></h1>
+        <p class="text-xs text-slate-400">Privacy-First Web Utilities</p>
+      </div>
+    </div>
+
+    <!-- Active Navigation Tabs -->
+    <nav class="hidden md:flex gap-2 bg-slate-800/80 p-1.5 rounded-xl border border-slate-700/50 text-sm font-medium">
+      <button onclick="switchTab('media')" id="btn-media" class="tab-btn px-4 py-2 rounded-lg transition-all text-white bg-indigo-600 shadow">
+        <i class="fa-solid fa-wand-magic-sparkles mr-2"></i>AI Media Lab
+      </button>
+      <button onclick="switchTab('converter')" id="btn-converter" class="tab-btn px-4 py-2 rounded-lg transition-all text-slate-400 hover:text-white">
+        <i class="fa-solid fa-file-pdf mr-2"></i>Image to PDF
+      </button>
+      <button onclick="switchTab('audio')" id="btn-audio" class="tab-btn px-4 py-2 rounded-lg transition-all text-slate-400 hover:text-white">
+        <i class="fa-solid fa-file-audio mr-2"></i>MP4 to MP3
+      </button>
+      <button onclick="switchTab('codes')" id="btn-codes" class="tab-btn px-4 py-2 rounded-lg transition-all text-slate-400 hover:text-white">
+        <i class="fa-solid fa-qrcode mr-2"></i>QR & Barcode
+      </button>
+    </nav>
+
+    <!-- Hermes Toggle Button -->
+    <button onclick="toggleHermes()" class="flex items-center gap-2 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white px-4 py-2 rounded-xl text-sm font-semibold shadow-lg shadow-indigo-500/25 transition-all">
+      <i class="fa-solid fa-robot"></i>
+      <span>Hermes AI</span>
+    </button>
+  </header>
+
+  <!-- Mobile Tab Navigation Bar -->
+  <div class="flex md:hidden bg-slate-800 p-2 gap-1 border-b border-slate-700 overflow-x-auto text-xs">
+    <button onclick="switchTab('media')" class="px-3 py-2 rounded bg-indigo-600 text-white whitespace-nowrap">AI Media</button>
+    <button onclick="switchTab('converter')" class="px-3 py-2 rounded bg-slate
